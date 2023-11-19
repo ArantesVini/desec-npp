@@ -39,3 +39,9 @@ O ideal é alterarpara **Prod** e também remover a assinatura do servidor, dess
 ## Logs do servidor
 
 Do lado do servidor, as informacoes de *logs* sao muito importantes, trazendo o agente que fez a requisicao, ferramenta e ate a versao utilizada, um exemplo utilizando o **Nkito**, que é um scanner de vulnerabilidades, muitas requisicoes sao feitas pelo mesmo endereco, o que ja chamaria atencao.
+
+# Entendo o lado do cliente
+
+Um ponto importante é o que divide o protocolo HTTP em Body e Head é 
+**\\r\\n\\r\\n**
+Por conta da tabela ASCII isso seria um *carriage return* e um *newline* separando a mensagem. Isso é importante pois requisicoes montadas utilizando python, por exemplo sempre precisam desse padrao no final do *header*.
