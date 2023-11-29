@@ -1,50 +1,13 @@
 #! /bin/bash
 
-initial_host="172.16.1"
-max_processes=100
-
-for host in $(seq 1 254); do
-    target_ping="172.16.1.$host"
-    url="srvkey.businesscorp.com.br"
-    first_port="13"
-    second_port="37"
-    third_port="30000"
-    fourth_port="3000"
-    activate_socket="172.16.1.$host:1337"
-    
-    hping3 -c 1 -S -p $first_port $target_ping &
-    hping3 -c 1 -S -p $second_port $target_ping &
-    hping3 -c 1 -S -p $third_port $target_ping &
-    hping3 -c 1 -S -p $fourth_port $target_ping &
-    
-    hping3 -c 1 -S --ack -p 1337 $host &
-    
-    if [[ $(jobs -p | wc -l) -ge $max_processes ]]; then
-        wait
-    fi
-    
+for i in {1..254}; do
+  ip="172.16.1.$i"
+  ping -c 1 -W 1 $ip > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo "Host $ip is up, checking port 1337"
+    nc -zv -w 5 $ip 1337 > /dev/null 2>&1
     if [ $? -eq 0 ]; then
-        echo "Host $target_ping is up"
-        echo "Host responded with an ACK flag"
-    else
-        echo "Host $target_ping is down"
+      echo "Port 1337 is open on $ip"
     fi
+  fi
 done
-
-wait
-
-# Copilot suggest the following: Try it at home
-
-#!/bin/bash
-
-# for i in {1..254}; do
-#   ip="172.16.1.$i"
-#   ping -c 1 -W 1 $ip > /dev/null 2>&1
-#   if [ $? -eq 0 ]; then
-#     echo "Host $ip is up, checking port 1337"
-#     nc -zv $ip 1337 > /dev/null 2>&1
-#     if [ $? -eq 0 ]; then
-#       echo "Port 1337 is open on $ip"
-#     fi
-#   fi
-# done
