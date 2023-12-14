@@ -42,3 +42,11 @@ Para enviar arquivos, abrimos uma porta e no final direcionamos o que vem para u
 
 ## Honeypot
 
+Atrair o atacante para uma armadilha, simulando portas abertas, quando alguem se conectar nessas portas, podemos acompanahr os movimentos.
+
+Usando um *&* no final do codigo o processo fica executando em background, entao no Netcat usariamos `nc -vnlp {porta}`, dessa forma, quando alguem se conectar ira aparecer no terminal.
+
+Para criar um honepote, podemos por exemplo criar um **banner** em *.txt*, exemplo simulando o banner do FTP, e outro arquivo *.log*, para ambos damos permissao total com `sudo chmod 777` nos dois arquivos.
+Agora aprimos a porta com `nc -vnlp {porta} < banner.txt` assim direcionamos a saida ao arquvio de banner criado, exibidno por exemplo o banner de um servidor FTP com informacoes falsas do nosso sistema. O seguinte precisamos direcionar para o *.log* usando agora `nc -vnlp {porta} < banner.txt >> file.log 2>> file.log`,  importante usador dois *sinais de maior que* para gravar no final do arquivo e nao substituir. Outro ponto sobre, e que usando `2>>` direcionamos tambem erros para um arquivo de log e gravamos no final estes. Dessa forma as tentativas de interacao com o honeypot ficam armazenadas, ainda podemos melhorar o script com `while true; do nc -vnlp {porta} < banner.txt >> file.log 2>> file.log;echo $(date) >> file.log;done` trazendo tambem a data e hora do que foi escrito no shell, e adicionado o *while true;do* impede que abrindo a primeiro conexao o netcat caia apos a primeira conexao ser encerrada.
+
+Usos desse honeypot seria por exemplo filtrar os IPs que se conectam as portas falsas e incluir em uma regra de bloqueio de firewall.
