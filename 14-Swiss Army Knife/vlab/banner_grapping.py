@@ -9,7 +9,7 @@ def scan_port(target, port):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((target, port))
-        print('[+] Banner: ' + str(sock.recv(1024)))
+        print('[+] Open Port: ' + str(port) + ' [+] Banner: ' + str(sock.recv(1024)))
         sock.close()
     except:
         print('[-] Port Closed: ' + str(port))
@@ -19,4 +19,14 @@ def scan_target(target, ports):
     for port in ports:
         scan_port(target, port)
 
+def scan_found_socket():
+    socket = '172.16.1.55:44905'
+    socket = socket.split(':')
+    target_ip = socket[0]
+    target_port = int(socket[1])
+    print('\nScanning Target: ' + target_ip)
+    scan_port(target_ip, target_port)
+
 scan_target(target_ip, ports)
+print('\n')
+scan_found_socket()
