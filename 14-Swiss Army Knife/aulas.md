@@ -119,3 +119,35 @@ Primeiro executamos na maquina atacante e em seguida na maquina alvo, podemos ad
 No exemplo as tres portas estao disponiveis, entao podemos usar qualquer uma dessas para um reverse shell.
 
 **Em casos praticos** muitas vezes protocolos especificos ficam disponiveis, entao alem de achar a porta correta, temos que achar o protocolo correto.
+
+## NCAT X Netcat
+
+O NCAT e uma evolucao do Netcat. A sintaxe padrao e bem semelhante, a porta listening aberta com 
+```shell 
+nc -vnlp {porta}
+``` 
+E estabelecer a conexao com 
+```shell
+nc -vn {ip} {porta}
+```
+Dessa forma padrao, o trafego ainda nao e criptografado, porem podemos criar uma chave criptografica antes de abrir a comunicacao
+```shell 
+nc -vnlp {porta} --ssl-key {chave.pem} -ssl-cert {cert.pem}
+```  
+e para estabelecer a conexao
+```shell 
+nc -vn {porta} -ssl
+``` 
+Dessa forma a conexao fica encriptada, que tambem podemos usar para shell/reverse shell para burlar IDS/IPS que possam bloquear a comunicacao se baseando nos dados enviados.
+
+## SOCAT
+
+As vezes vem por default no Linux, pode ser uma alternativa de swiss army knife
+
+## TELNET
+
+Pode ser um canivete suico tbm, alem das interacoes com servico, podem fazer um bind shell / reverse shell usando esse utilitario junto com netcat apenas para visualizar o shell
+
+# /DEV/TCP/
+
+Quando usamos o /DEV/TCP/ em linux estamos abrindo um **socket** com o ip informado seguido a porta, exemplo: `echo "hi" /DEV/TCP/192.168.0.1/4545`
