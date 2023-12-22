@@ -48,3 +48,36 @@ No mundo todo, empresas gigantes sofrem desses vazamentos.
 - Have i been pwned?
 - Site de vendas de Leaks
 
+# Consultando Leaks na Dark Web
+
+- Dehashed - Semelhante ao Have I Been Pwned? Porem promete que quando voce paga exibe os dados censurados vazados
+
+## Base de leaks na darkweb
+
+**Aviso**: Links de sites da darkweb, utilize o Tor!!
+
+- http://pwndb2am4tzkvold.onion/ - Atualizacao: site morreu!
+- Consegue verificar por dominio, e-mail, usuario, senha
+
+# Utilizando a rede TOR no kali
+
+```shell
+# No terminal, digite uma linha por vez
+# E necessario usar os pacotes tor e proxychains com 
+sudo apt install tor proxychains
+# iniciar servico do tor
+service tor start
+# checar se o servico do tor esta funcionando
+netstat -nlpt
+# Configurar o proxychains
+nano /etc/proxychains.conf
+# Configurar com a porta em execucao no Tor, no fim do arquivo
+socks5 {ip} 9050 
+# E escolher entre as opcoes random, dynamic ou strict, descomentando a que for usar. Dynamic e mais funcional
+```
+
+Na sequencia configuramos nosso navegador indo em preferencias/network/settings/ e escolher o proxy local do tipo SOCKS v5 e passar o endereco local e a porta a ser utilizada e marcar a opcao de fazer proxy do DNS quando estiver sendo utilizado.
+
+# Script para consulta de Leaks
+
+E apresentando o Karma, que tambem morreu :(
